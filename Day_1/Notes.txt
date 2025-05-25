@@ -1,0 +1,6 @@
+PMPP Book chapter 1: 
+
+* CPU vs GPU: Serial vs massive paralle execution 
+* Using GPU makes sense when a lot of the execution part is in the parallel execution space. 
+* GPU's global memory (DRAM) access is costly and if its accessed regularly, between the wait times for compute and memory, memory will take more time and the valuable GPU chip compute will stay vacant. 
+** Hence, limit the usage of Global memory and use the shared & constant memory,registers
