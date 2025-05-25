@@ -4,3 +4,16 @@ PMPP Book chapter 1:
 * Using GPU makes sense when a lot of the execution part is in the parallel execution space. 
 * GPU's global memory (DRAM) access is costly and if its accessed regularly, between the wait times for compute and memory, memory will take more time and the valuable GPU chip compute will stay vacant. 
 ** Hence, limit the usage of Global memory and use the shared & constant memory,registers
+
+--- More about GPU Arch: 
+
+* GPUs have less cache at L1/L2 etc 
+* GPUs have many cores as opposed to some cores on a CPU (called Multi core CPU)
+* All threads go into blocks. Blocks get executed by SM (streaming multi proc) either sequentially or concurrently. 
+
+* A GPU with more such SM can naturally out perform a GPU with lesser SM 
+
+--- CUDA: 
+
+* 
+
