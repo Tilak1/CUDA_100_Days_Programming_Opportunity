@@ -1,4 +1,3 @@
-Here’s a clean, professional, and GitHub-friendly version of your `README.md` section with proper formatting, clarity, and GitHub Markdown best practices:
 
 ---
 
@@ -102,4 +101,3 @@ You can improve occupancy and achieve faster kernel execution.
 
 ---
 
-Let me know if you’d like me to include images or diagrams for this!
