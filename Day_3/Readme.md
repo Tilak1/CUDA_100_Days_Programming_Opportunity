@@ -76,6 +76,15 @@ if (row < height && col < width) {
 
 ---
 
+## 🎯 Concept: Transparent Scalability 
+
+Making the blocks order of execution independent from others can help stay hardware agnostic
+
+![image](https://github.com/user-attachments/assets/2b939660-8e48-4979-85eb-d24a90c0ca6f)
+
+
+---
+
 ## 🎯 Concept: Flexible Resource Assignment & Occupancy
 
 In CUDA, **occupancy** refers to how well the GPU’s resources (like threads and registers) are utilized. Achieving high occupancy means:
