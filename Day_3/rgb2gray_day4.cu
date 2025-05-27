@@ -52,7 +52,7 @@ void rgb2gray_gpu(unsigned char* red, unsigned char* green, unsigned char* blue,
     // 4 blocks of each 4x4
     // Appplying the same numBlocks formula from one dimension in Day 2 to multi dimenisonal 
     dim3 numThreadPerBlock(32, 32); // 16x16x1 1 in z is a default value
-    dim3 numBlocks(width+numThreadPerBlock.x-1/numThreadPerBlock.x, height+numThreadPerBlock.y-1/numThreadPerBlock.y, 1);
+    dim3 numBlocks((width+numThreadPerBlock.x-1)/numThreadPerBlock.x, (height+numThreadPerBlock.y-1)/numThreadPerBlock.y, 1);
     rgb2gray_kernel<<<numBlocks,numThreadPerBlock>>>(red_d, green_d, blue_d, gray_d, width, height);
 
     cudaDeviceSynchronize();
