@@ -74,6 +74,11 @@ __global__ void MatMulTiled(float* A, float* B, float* C, int Width) {
     C[Row * Width + Col] = Pvalue;
 }
 ````
+Peinding: 
+
+Complete final understanding from PMPP, GPT and Video. 
+Run both codes and commit 
+-----
 
 Additional references:
 
