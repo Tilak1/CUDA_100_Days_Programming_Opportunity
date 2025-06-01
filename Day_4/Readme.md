@@ -56,6 +56,10 @@ N = 10^8 (gemmN.cu)
 * GPU kernel execution time: 14.0202 ms               
 * CPU execution time: 738.499 ms 
 
+---
+
+* Further the previous section's GEMM theory will be implemented the next day
+
 Additional references:
 
 * [Stanford CS336: LLM from Scratch](https://web.stanford.edu/class/cs336/)
