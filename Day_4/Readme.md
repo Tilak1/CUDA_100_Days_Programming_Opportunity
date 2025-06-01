@@ -34,6 +34,28 @@ This is where shared memory tiling becomes critical. Threads within a CUDA block
 
 Frameworks like Triton, used in the [Caterpillar Project](https://github.com/yogeshsinghrbt/caterpillar), automate many of these optimizations. Tiling, shared memory reuse, and blocking help increase arithmetic intensity—more computation per memory access—which is essential for achieving high throughput in matrix-heavy GPU applications like deep learning or baseband signal processing.
 
+---
+# GPU vs CPU execution time: 
+GPU's necessity is only observed at economies of scale. Below are the execution times for increasing N size of a simple matrix addition kernel. 
+
+N = 10 (gemm.cu)
+
+* Kernel execution time: 15.0917 ms                                                    
+* CPU execution time: 0.000281 ms
+
+N = 10^6 (gemmN.cu)
+
+* GPU kernel execution time: 14.1033 ms                            
+* CPU execution time: 6.90739 ms
+
+N = 10^7 (gemmN.cu)
+* GPU kernel execution time: 15.4013 ms                                 
+* CPU execution time: 64.3762 ms 
+
+N = 10^8 (gemmN.cu)
+* GPU kernel execution time: 14.0202 ms               
+* CPU execution time: 738.499 ms 
+
 Additional references:
 
 * [Stanford CS336: LLM from Scratch](https://web.stanford.edu/class/cs336/)
