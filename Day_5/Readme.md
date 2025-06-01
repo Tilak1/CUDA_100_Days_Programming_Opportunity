@@ -83,5 +83,5 @@ Run both codes and commit
 Additional references:
 
 * [Programming Massively Parallel Processors - Chapter 4](https://github.com/R100001/Programming-Massively-Parallel-Processors/tree/master/Chapters/Ch04%20-%20Memory%20And%20Data%20Locality)
-
+* [Simon GPU programming](https://github.com/SzymonOzog/GPU_Programming/tree/main)
 ```
