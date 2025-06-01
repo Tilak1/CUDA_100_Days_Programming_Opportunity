@@ -15,6 +15,7 @@ __global__ void gemmGPUkernel(int *a, int *b, int *c, int n)
             sum += a[row * n + k] * b[k * n + col];
             c[row * n + col] = sum;
         //c[row * n + col] = a[row * n + k] * b[k * n + col];
+	//// this cant be used as it will not accumulate the sum across all the same row and column's. Instead it will have only the last row & col element's product.
     }
 }
 
