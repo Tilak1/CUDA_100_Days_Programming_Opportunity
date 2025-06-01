@@ -1,5 +1,19 @@
 Day 5 Notes: 
 ---
+Baisc GEMM (gemm.cu) metrics: 
+
+    N = 100
+    
+    GPU execution time: 22.1696 ms                                                                    
+    CPU execution time: 4.57534 ms                                                                    
+    
+    N = 1000
+    
+    GPU execution time: 22.2881 ms                                                                    
+    CPU execution time: 4902.46 ms 
+---
+Now will tiled implementation work better than the above metrics ? 
+---
 
 # Tiled GEMM: 
 
