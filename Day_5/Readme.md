@@ -19,7 +19,7 @@ Now will tiled implementation work better than the above metrics ?
 
 # Tiled GEMM: 
 
-Threads collab - Barrier Synch - 
+Threads collab - Barrier Synch - i.e the use of         __syncthreads(); to make sure all the threads use the shared memory. From now onwards the concept of shared memory comes in. 
 
 Tiling:  Load a tile to shared mem (whose size is equal to the shared mem size) and the mulitple launched threads which also need the same content - 
 will utilize the common tile loaded content to compute a different partial product c[i][j] at the same time. 
