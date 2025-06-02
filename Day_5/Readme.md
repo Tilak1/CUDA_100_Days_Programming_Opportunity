@@ -2,6 +2,8 @@ Day 5 Notes:
 ---
 Baisc GEMM (gemm.cu) metrics: 
 
+N representing all matrix sizes NxN.
+
     N = 100
     
     GPU execution time: 22.1696 ms                                                                    
