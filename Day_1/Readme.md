@@ -1,5 +1,3 @@
-Here's a well-formatted and structured `README.md` based on your notes from Chapter 1 of the PMPP book:
-
 ---
 
 # 📘 PMPP Book – Chapter 1 Summary
