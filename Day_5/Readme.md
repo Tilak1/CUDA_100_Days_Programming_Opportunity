@@ -1,103 +1,164 @@
-Day 5 Notes: 
+
+
+## 📅 Day 5 Notes: Matrix Multiplication with CUDA
+
+### Basic GEMM (gemm.cu) metrics:
+
+Matrix size `N x N` wqdq
+
+```
+N = 100
+GPU execution time:   22.1696 ms  
+CPU execution time:    4.57534 ms  
+
+N = 1000
+GPU execution time:   22.2881 ms  
+CPU execution time: 4902.46 ms  
+```
+
 ---
-Baisc GEMM (gemm.cu) metrics: 
 
-N representing all matrix sizes NxN.
+### ❓ Question:
 
-    N = 100
-    
-    GPU execution time: 22.1696 ms                                                                    
-    CPU execution time: 4.57534 ms                                                                    
-    
-    N = 1000
-    
-    GPU execution time: 22.2881 ms                                                                    
-    CPU execution time: 4902.46 ms 
----
-Now will tiled implementation work better than the above metrics ? 
+Can tiled implementation **beat** the above metrics?
+
 ---
 
-# Tiled GEMM: 
+## 🚀 Tiled GEMM Implementation:
 
-Threads collab - Barrier Synch - i.e the use of         __syncthreads(); to make sure all the threads use the shared memory. From now onwards the concept of shared memory comes in. 
+### 🔍 Motivation:
 
-Tiling:  Load a tile to shared mem (whose size is equal to the shared mem size) and the mulitple launched threads which also need the same content - 
-will utilize the common tile loaded content to compute a different partial product c[i][j] at the same time. 
+* Use of **shared memory** via `__shared__` and **barrier synchronization** using `__syncthreads()` to avoid repeated global memory fetches.
+* Load a block-sized tile of matrices **A** and **B** into shared memory **once**, and allow all threads in the block to compute on this tile.
+* This saves time as **shared memory is much faster than global memory**.
+* The logic ensures we **reuse** portions of matrices A and B.
 
-It also divides the long access sequences of each thread into phases. and uses barrier synchronization to keep the timing of accesses to each section at close intervals. 
-This technique controls the amount of on-chip memory required by localizing the accesses both in time and in space.
+---
 
-The size of the shared memory is quite small, and the capacity of the shared memory should not be exceeded when these M and N elements are loaded into the shared memory. 
-This condition can be satisfied by dividing the M and N matrices into smaller tiles so that they can fit into the shared memory.
+### 🧱 Core Logic Breakdown:
 
-Now acheiving this threads collab using Tiling
-
-
-__ syncthreads() is doing barrier synch 
-
---- code 
-
-Row = by.Tile_width+ty (hereinstead of Bock_dimension - now a reduced Tile_width comes into picture)
-Col = bx.Tile_width+tx 
-
-Shared mem loading: 
-* What could be the index logic here ? 
-
-Mds = A [][]
-Nds = B [][]
-
-from our prev only GEMM   Pvalue += M[Row*Width+k]*N[k*Width+Col]; - now to load in shmem in terms of tiles - we need to instead load in terms of Tile_width - not a single K. 
-
-So, For each tile, k = ph*TILE_WIDTH + tx	
-Matrix A, you need to load A[Row][ph*TILE_WIDTH + tx] - flattening to 1D = A[Row * Width + ph * TILE_WIDTH + tx]
-
-Load B[k][Col] from global mem	Same idea, but B is accessed row-wise	d_N[(ph * TILE_WIDTH + ty) * Width + Col]
-
-Store into shared memory	Let all threads in block reuse the tile	Mds[ty][tx], Nds[ty][tx]
-
-
-__ syncthreads() // All 4 threads are expected to sync well to make sure to read any common content 
-
-final P = Mds[][] * Nds[][]
+* Each block handles a **tile** of the result matrix.
+* Each thread calculates a single element `c[row][col]` by looping over shared memory tiles.
 
 ```cpp
-#define TILE_WIDTH 2  // or 16 for larger real examples
+Row = blockIdx.y * TILE_WIDTH + threadIdx.y;
+Col = blockIdx.x * TILE_WIDTH + threadIdx.x;
+```
 
-__global__ void MatMulTiled(float* A, float* B, float* C, int Width) {
-    __shared__ float Asub[TILE_WIDTH][TILE_WIDTH];
-    __shared__ float Bsub[TILE_WIDTH][TILE_WIDTH];
+---
 
-    int tx = threadIdx.x, ty = threadIdx.y;
-    int bx = blockIdx.x, by = blockIdx.y;
+### 📦 Shared Memory Loading:
 
-    int Row = by * TILE_WIDTH + ty;
-    int Col = bx * TILE_WIDTH + tx;
+```cpp
+__shared__ int T_a[TILE_WIDTH][TILE_WIDTH];
+__shared__ int T_b[TILE_WIDTH][TILE_WIDTH];
+```
 
-    float Pvalue = 0;
+* Threads in the block **collaboratively** load a tile of A and B:
 
-    for (int ph = 0; ph < Width / TILE_WIDTH; ++ph) {
-        Asub[ty][tx] = A[Row * Width + ph * TILE_WIDTH + tx];
-        Bsub[ty][tx] = B[(ph * TILE_WIDTH + ty) * Width + Col];
+```cpp
+T_a[ty][tx] = a[row * n + (ph * TILE_WIDTH + tx)];
+T_b[ty][tx] = b[(ph * TILE_WIDTH + ty) * n + col];
+```
 
-        __syncthreads();
+* This is a **tile-phase-based access**:
 
-        for (int k = 0; k < TILE_WIDTH; ++k)
-            Pvalue += Asub[ty][k] * Bsub[k][tx];
+  * `ph` is the **phase number** of the tile
+  * `TILE_WIDTH * TILE_WIDTH` shared memory usage must **fit into GPU’s shared memory**
 
-        __syncthreads();
-    }
+---
 
-    C[Row * Width + Col] = Pvalue;
-}
-````
-Peinding: 
+### 🔁 Synchronization:
 
-Complete final understanding from PMPP, GPT and Video. 
-Run both codes and commit 
------
+```cpp
+__syncthreads();
+```
 
-Additional references:
+Used twice:
+
+1. After loading tiles
+2. After performing multiply-adds before moving to the next tile
+
+---
+
+### 🧮 Final Computation:
+
+```cpp
+for (int k = 0; k < TILE_WIDTH; ++k)
+    sum += T_a[ty][k] * T_b[k][tx];
+```
+
+---
+
+## 🧠 Notes on Thread-Index Mapping:
+
+* In shared memory:
+
+  * `ty` → row index within tile
+  * `tx` → col index within tile
+    Hence shared memory loading is:
+
+```cpp
+T_a[ty][tx]   // matches A[row][tile_col]
+T_b[ty][tx]   // matches B[tile_row][col]
+```
+
+---
+
+## ✅ Dynamic Block Size:
+
+Avoid hardcoding:
+
+```cpp
+dim3 block(TILE_WIDTH, TILE_WIDTH);
+dim3 grid((N + TILE_WIDTH - 1) / TILE_WIDTH, (N + TILE_WIDTH - 1) / TILE_WIDTH);
+```
+
+This was done to have the same block size as the tiles. 
+
+If blockDim != TILE_WIDTH, then:
+
+Either some threads write out-of-bounds, or
+
+Some slots are never filled, leading to wrong results.
+
+---
+
+### 🔬 Numerical Indexing Example:
+
+* Suppose `N = 4`, `TILE_WIDTH = 2`
+* `grid` = (2, 2), `block` = (2, 2)
+* Threads (0,0) to (1,1) in a block will:
+
+  * Load subtiles `T_a[ty][tx]` and `T_b[ty][tx]` for current phase `ph`
+  * Compute and accumulate `sum`
+  * Store `c[row][col] = sum`
+
+---
+
+## 📊 Tiled GEMM metrics (gemmTiled.cu):
+
+```
+N = 256
+Tile_Width = 2
+GPU execution time:          31.1038 ms  
+Tiled GPU execution time:     0.489472 ms  
+CPU execution time:          73.3571 ms  
+
+N = 100000
+Tile_Width = 100
+GPU execution time:         126.883 ms
+Tiled GPU execution time:     0.005792 ms
+CPU execution time:         (timeout)
+```
+
+> 🧠 **Conclusion**: Tiling improves GPU performance drastically with large `N` and moderate tile sizes.
+
+---
+
+### 📚 Additional references:
 
 * [Programming Massively Parallel Processors - Chapter 4](https://github.com/R100001/Programming-Massively-Parallel-Processors/tree/master/Chapters/Ch04%20-%20Memory%20And%20Data%20Locality)
 * [Simon GPU programming](https://github.com/SzymonOzog/GPU_Programming/tree/main)
-```
+
+---
