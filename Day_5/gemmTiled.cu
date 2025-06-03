@@ -2,8 +2,8 @@
 #include <cuda_runtime.h>
 #include <chrono>
 
-#define N 256
-#define TILE_WIDTH 2  // Tile width for shared memory
+#define N 10000
+#define TILE_WIDTH 100  // Tile width for shared memory
 
 
 __global__ void gemmGPUTiledkernel(int *a, int *b, int *c, int n)
@@ -142,7 +142,7 @@ int main()
     //because our shared memory tiles are also based on TILE_WIDTH*TILE_WIDTH
 
     // Trying to avoid hardcoding the block size as extra block size - more threads than the available shared memory which is based on TILE_WIDTH*TILE_WIDTH
-    
+
 
     dim3 block(TILE_WIDTH, TILE_WIDTH);
     dim3 grid((N + block.x - 1) / block.x, (N + block.y - 1) / block.y);
