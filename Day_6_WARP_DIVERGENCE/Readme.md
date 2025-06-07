@@ -2,7 +2,7 @@ Rectangular Kernels:
 
 For an even more reduced global memory usage. 
 
-
+5.1, 5.2 not understood - Need to redo again
 
 
 Till now we have seen memory colaescing techniques and tiling (for optimized gloabl memory access and barrier synchronization) to improve the gemm performance by improving communication and computation tradeoff.
