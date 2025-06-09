@@ -17,6 +17,8 @@ df = pd.read_csv(csv_file)
 df["total_time_us"] = df["copy_time_us"] + df["kernel_time_us"]
 
 # Plot
+
+# Plot
 plt.figure(figsize=(12, 6))
 sns.lineplot(data=df, x="batch_id", y="total_time_us", label="Total time (us)")
 sns.lineplot(data=df, x="batch_id", y="copy_time_us", label="Copy time (us)")
@@ -27,4 +29,6 @@ plt.ylabel("Time (microseconds)")
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-plt.show()
+
+# Save the figure as PNG with high resolution
+plt.savefig("cuda_timing_profile.png", dpi=300)
