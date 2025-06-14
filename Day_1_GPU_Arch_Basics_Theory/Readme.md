@@ -1,61 +1,70 @@
----
-
-# 📘 PMPP Book – Chapter 1 Summary
-
-## 🚀 CPU vs GPU
-
-![image](https://github.com/user-attachments/assets/8ef5c315-4310-4a7a-8e19-3e90b1dbee99)
-
-* **CPU**: Optimized for **serial execution** with few, high-performance cores.
-* **GPU**: Designed for **massive parallel execution**, using hundreds to thousands of smaller cores.
-
-> ✅ Using a GPU is ideal **only when** a large portion of the workload can be executed in parallel. Same operations on different data – so can parallelize / comes into the Data prallelism. 
-![image](https://github.com/user-attachments/assets/fd296e50-5974-497a-ab0c-616ddfae5396)
-
-> Why GPU's have less cache and L1/L3
-![image](https://github.com/user-attachments/assets/852a8bb9-62ea-4432-b97b-d0a6870c0be3)
-* Ability to tolerate long-latency operations is the main reason GPUs do not dedicate nearly as much chip area to cache memories and branch prediction mechanisms as do CPUs. Thus, GPUs can dedicate more of its chip area to floating-point execution resources.
-* This will be discussed more on Day 3 notes (Thread scheduling - WARP - latency)
-
 
 ---
 
-## 🔍 Memory Access on GPUs
+# 📘 **PMPP Book – Chapter 1 Summary: Introduction to Massively Parallel Processors**
 
-* **Global memory (DRAM)** access is **costly** and slow.
-* If a kernel frequently accesses global memory, **memory latency dominates** and the **compute cores sit idle**.
-* **Best practice**:
-  Use **shared memory**, **constant memory**, and **registers** wherever possible to reduce latency.
+## 🚀 **CPU vs GPU**
 
----
+![CPU vs GPU](https://github.com/user-attachments/assets/8ef5c315-4310-4a7a-8e19-3e90b1dbee99)
 
-## 🧱 GPU Architecture Highlights
+* **CPU**: Designed for **serial execution**, with a few **high-performance cores**.
+* **GPU**: Optimized for **massive parallelism**, featuring **hundreds to thousands** of lightweight cores.
 
-* GPUs have **limited L1/L2 cache** compared to CPUs.
-* **Many-core architecture**: Unlike CPUs which have few powerful cores, GPUs have **many lightweight cores**.
-* Threads are organized into **blocks**.
-* **Blocks are assigned to SMs (Streaming Multiprocessors)** for execution:
+> ✅ GPUs excel when a **large portion of a workload** is **parallelizable**, especially with **data parallelism** (same operation on different data).
 
-  * Execution may be **sequential or concurrent** depending on scheduling.
-* GPUs with **more SMs** generally have **higher throughput** and performance.
+![Data Parallelism](https://github.com/user-attachments/assets/fd296e50-5974-497a-ab0c-616ddfae5396)
 
----
+### ❓ Why do GPUs have less L1/L3 cache?
 
-## 💻 CUDA Overview
+![Cache comparison](https://github.com/user-attachments/assets/852a8bb9-62ea-4432-b97b-d0a6870c0be3)
 
-> *(To be expanded in next chapters)*
-
-* CUDA enables writing C/C++-like code for **NVIDIA GPUs**.
-* Programmer specifies:
-
-  * Number of **threads per block**
-  * Number of **blocks per grid**
-* CUDA exposes fine-grained control over thread and memory hierarchies.
+* GPUs **tolerate long-latency memory operations** through **massive thread-level parallelism**, not large caches.
+* This allows more silicon to be allocated to **floating-point execution units** rather than caches or branch predictors.
+* More on this in Day 3 (Warp scheduling & latency hiding).
 
 ---
 
-Ref for Day 1: 
+## 🔍 **Memory Access on GPUs**
 
-https://github.com/R100001/Programming-Massively-Parallel-Processors/tree/master/Chapters/Ch01%20-%20Introduction
+* **Global memory (DRAM)** access is **high-latency**.
+* If threads frequently access global memory without optimization, **memory stalls** cause **compute under-utilization**.
+* 🔧 **Best Practices**:
 
-https://docs.nvidia.com/cuda/cuda-c-programming-guide/#performance-guidelines
+  * Use **shared memory**, **constant memory**, and **registers** for faster access.
+
+![Memory Hierarchy](https://github.com/user-attachments/assets/fdc5aba5-849c-47ad-bafc-385d0069f9fa)
+
+---
+
+## 🧱 **GPU Architecture Highlights**
+
+* **Smaller caches (L1/L2)** compared to CPUs.
+* **Many-core architecture**: GPUs use many **lightweight cores**, unlike the fewer powerful CPU cores.
+* Threads are grouped into **blocks**, which are assigned to **Streaming Multiprocessors (SMs)**.
+* SMs schedule and execute **blocks concurrently or sequentially**, depending on resource availability.
+* More **SMs = Higher throughput & parallelism**.
+
+---
+
+## 💻 **CUDA Overview (Intro)**
+
+> *(Will be expanded in later chapters)*
+
+* CUDA allows writing **GPU kernels** in C/C++ for NVIDIA GPUs.
+* Key abstractions:
+
+  * **Threads per block**
+  * **Blocks per grid**
+* CUDA exposes hierarchical **thread and memory models** for fine-grained optimization.
+
+---
+
+### 📚 **References (Day 1)**
+
+* 📖 [PMPP GitHub Book Chapter 1](https://github.com/R100001/Programming-Massively-Parallel-Processors/tree/master/Chapters/Ch01%20-%20Introduction)
+* 📘 [CUDA C Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/#performance-guidelines)
+* 🧠 [Intro to GPUs – Diffusion Policy Blog](https://www.vrushankdes.ai/diffusion-policy-inference-optimization/part-i---intro-to-gpus)
+
+---
+
+Let me know if you'd like a printable or OneNote-friendly version, or if you're working on Day 2 and want a similar format.
