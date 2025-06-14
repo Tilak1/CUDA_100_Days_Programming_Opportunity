@@ -24,18 +24,6 @@
 
 ---
 
-## 🔍 **Memory Access on GPUs**
-
-* **Global memory (DRAM)** access is **high-latency**.
-* If threads frequently access global memory without optimization, **memory stalls** cause **compute under-utilization**.
-* 🔧 **Best Practices**:
-
-  * Use **shared memory**, **constant memory**, and **registers** for faster access.
-
-![Memory Hierarchy](https://github.com/user-attachments/assets/fdc5aba5-849c-47ad-bafc-385d0069f9fa)
-
----
-
 ## 🧱 **GPU Architecture Highlights**
 
 * **Smaller caches (L1/L2)** compared to CPUs.
@@ -44,6 +32,27 @@
 * SMs schedule and execute **blocks concurrently or sequentially**, depending on resource availability.
 * More **SMs = Higher throughput & parallelism**.
 
+![Memory Hierarchy](https://github.com/user-attachments/assets/fdc5aba5-849c-47ad-bafc-385d0069f9fa)
+
+
+
+
+## **Shared Memory:**
+
+* Each SHM bank does have a limit of serving 1 byte per clock cycle. As a result, it is most efficient to have each thread access **sequential shared memory addresses** to prevent accesses from becoming serialized. It should be noted that this latency penalty arises due to resource contention between threads trying to access the same memory pool and not due to the ordering of memory addresses within the same pool.
+
+![image](https://github.com/user-attachments/assets/455c8625-2a04-408b-a8b2-254fad61c5ac)
+
+* In the example above, the access pattern on the left and right are bank-conflict free. The pattern in the middle however, involves multiple threads simultaneously accessing the same SRAM bank. The SRAM memory controller in this case would have to serialize these accesses and the net result would be the access being twice as slow.
+
+---
+
+## 🔍 **Memory Access on GPUs**
+
+* **Global memory (DRAM)** access is **high-latency**.
+* If threads frequently access global memory without optimization, **memory stalls** cause **compute under-utilization**.
+* 🔧 **Best Practices**:
+  * Use **shared memory**, **constant memory**, and **registers** for faster access.
 ---
 
 ## 💻 **CUDA Overview (Intro)**
@@ -66,5 +75,3 @@
 * 🧠 [Intro to GPUs – Diffusion Policy Blog](https://www.vrushankdes.ai/diffusion-policy-inference-optimization/part-i---intro-to-gpus)
 
 ---
-
-Let me know if you'd like a printable or OneNote-friendly version, or if you're working on Day 2 and want a similar format.
