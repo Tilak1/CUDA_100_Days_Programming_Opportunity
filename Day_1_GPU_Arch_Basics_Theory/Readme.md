@@ -34,8 +34,7 @@
 
 ![Memory Hierarchy](https://github.com/user-attachments/assets/fdc5aba5-849c-47ad-bafc-385d0069f9fa)
 
-
-
+---
 
 ## **Shared Memory:**
 
@@ -44,8 +43,27 @@
 ![image](https://github.com/user-attachments/assets/455c8625-2a04-408b-a8b2-254fad61c5ac)
 
 * In the example above, the access pattern on the left and right are bank-conflict free. The pattern in the middle however, involves multiple threads simultaneously accessing the same SRAM bank. The SRAM memory controller in this case would have to serialize these accesses and the net result would be the access being twice as slow.
+* Shared memory can also be useful for coalescing a strided global memory load, which if performed directly into thread registers may have required very slow un-coalesced access.
+* Overusing SMEM will prevent the warp scheduler from making the SM fully occupied and hurt overall kernel performance.
+---
+## Thread Regsters: 
+
+* On an RTX 3090, threads cannot use more than 255 registers without spilling to ‘local memory’ which is somewhat deceptively named as it refers to an address space that threads can utilize in global memory.
+---
+## Warps-Register Spilling: 
+
+* Often times warps will utilize a large number of registers and then ‘stall’ due to memory dependencies. When the cumulative size of all register files for issued warps exceeds the physical register space on the SM, this can lead to ‘register spilling’. In these cases the GPU will fall back to storing local variables in L2 cache or global memory. The key takeaway here is that the GPU is designed to very quickly swap in different workloads to hide memory latency (define this on the side). So long as there are enough warps to throw into the fray, memory loading and compute can overlap. It’s the programmers job to understand this concept (occupancy) and make sure the GPUs compute execution units can keep the hungry compute units fed.
 
 ---
+
+## Tensor Cores: 
+
+* Each tensor core can execute an entire 16x16 mma (matrix multiply and accumulate) in a single clock cycle (~0.75ns for RTX 3090).
+![image](https://github.com/user-attachments/assets/daf483c7-ff07-4228-af85-982868f36809)
+
+* The operation is performed as a warp-wide operation as all 32 threads have to participate in loading the input matrices into the tensor cores, which breaks the thread/warp abstraction to some extent in CUDA.
+
+
 
 ## 🔍 **Memory Access on GPUs**
 
@@ -53,6 +71,16 @@
 * If threads frequently access global memory without optimization, **memory stalls** cause **compute under-utilization**.
 * 🔧 **Best Practices**:
   * Use **shared memory**, **constant memory**, and **registers** for faster access.
+
+
+![image](https://github.com/user-attachments/assets/2faea4c7-aae3-4b0b-8798-414ea12e33e1)
+
+    
+Efficient use of shared memory/registers and coalesced global memory access can unlock high memory throughput. This in turns allows you to keep the thousands of cores on-chip fed. A kernel with healthy memory usage practices and effective overlapping of memory access with compute will go very far in achieving high overall hardware utilization.
+
+![Alt text](https://cdn.prod.website-files.com/65cbfd86576f83a5d9e2875e/65ea63fcd777bf1e209e71f2_gpu_memory_hierarchy_rev2.gif)
+
+
 ---
 
 ## 💻 **CUDA Overview (Intro)**
@@ -65,6 +93,9 @@
   * **Threads per block**
   * **Blocks per grid**
 * CUDA exposes hierarchical **thread and memory models** for fine-grained optimization.
+
+![image](https://github.com/user-attachments/assets/be7da3a2-0239-4355-b675-6db66457b64d)
+
 
 ---
 
