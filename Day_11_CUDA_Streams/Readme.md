@@ -1,14 +1,12 @@
 ### CUDA Streams: 
 
-
-
-wdqd
+Need the Host pinned memory to 
 
 
 
-wqsqwdwqs
+Ref: 
 
-sqwsqws
+https://developer.download.nvidia.com/CUDA/training/StreamsAndConcurrencyWebinar.pdf
 
+https://turing.une.edu.au/~cosc330/lectures/display_notes.php?lecture=22
 
-xs
