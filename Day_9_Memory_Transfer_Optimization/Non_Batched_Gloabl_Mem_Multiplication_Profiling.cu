@@ -9,8 +9,15 @@
 constexpr int RAYS = 64000;
 constexpr int FRAMES = 20;
 constexpr int N = 4096; // FFT size
-constexpr int TOTAL = RAYS * FRAMES * N;
+//constexpr int TOTAL = RAYS * FRAMES * N;
+
+
+constexpr long long TOTAL_LL = 1LL * RAYS * FRAMES * N;
+constexpr int TOTAL = static_cast<int>(TOTAL_LL);
+
+
 constexpr int BLOCKSIZE = 256;
+//constexpr long long TOTAL = static_cast<long long>(RAYS) * FRAMES * N;
 
 __global__ void flat_pw_multiply(const cuFloatComplex* X,
                                  const cuFloatComplex* H,
