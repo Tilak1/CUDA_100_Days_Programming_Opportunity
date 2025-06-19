@@ -31,6 +31,10 @@ Aftet this asynchronous call of memcpyAsync, Kernel will also be called aysncly
 
 
 ## Ref: 
+
+https://turing.une.edu.au/~cosc330/lectures/lecture_22/examples/
+
+
 https://leimao.github.io/blog/CUDA-Stream/
 
 https://turing.une.edu.au/~cosc330/lectures/display_notes.php?lecture=22
