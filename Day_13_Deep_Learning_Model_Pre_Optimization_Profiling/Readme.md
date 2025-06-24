@@ -48,6 +48,16 @@ Examples:
 - PyTorch framework internal time 🧱
 - CUDA kernel *launch* delays (not execution!) 🚀
 
+Torch Dynamo - using best of both worlds ? 
+https://dev-discuss.pytorch.org/t/torchdynamo-an-experiment-in-dynamic-python-bytecode-transformation/361
+
+PyTorch Dynamo: This is a Python-level Just-In-Time (JIT) compiler that works as a tracer within PyTorch's function. Its purpose is to make PyTorch programs faster by capturing the model's operations into an optimized, executable graph. It does this by analyzing bytecode and mixing Python execution with compiled backends.
+
+
+PyTorch Dynamo Graphs (FxGraphs): When PyTorch Dynamo compiles your code, it traces the Python operations and builds a representation of the model's computation as an FxGraph. This FxGraph is essentially a high-level Intermediate Representation (IR) that captures the sequence of operations in your PyTorch model. It's a graph of PyTorch operations, not a graph of CUDA kernels.
+
+
+
 ### Visualization:
 ![Overhead Breakdown](https://github.com/user-attachments/assets/e288d349-5d27-4754-8b82-dd7031096b75)
 
@@ -65,5 +75,7 @@ Let’s now apply all the concepts above and **profile a U-Net** model:
 
 ## 📚 References
 
-- 📝 [Horace.io: GPU Go Brrr!](https://horace.io/brrr_intro.html)  
+- 📝 [Horace.io: GPU Go Brrr!](https://horace.io/brrr_intro.html)
+- 📝 [Pytorch Dynamo] (https://dev-discuss.pytorch.org/t/torchdynamo-an-experiment-in-dynamic-python-bytecode-transformation/361)
+
 - 💡 [Inference Optimization Blog Series](https://github.com/vdesai2014/inference-optimization-blog-post/tree/main/part-3)
