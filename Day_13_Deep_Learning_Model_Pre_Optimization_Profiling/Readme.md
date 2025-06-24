@@ -43,6 +43,15 @@ If this number is low, you're either:
 
 Overhead = Time spent **not doing actual compute or tensor transfers**.
 
+
+-- PENDING ------
+
+CPU vs GPU grapha nd the nvidia-smi giving chance to see this - ?
+
+
+------
+
+
 Examples:
 - Python interpreter time 🐍
 - PyTorch framework internal time 🧱
