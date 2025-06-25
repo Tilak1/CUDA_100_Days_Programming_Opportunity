@@ -80,6 +80,32 @@ Let’s now apply all the concepts above and **profile a U-Net** model:
 - Measure utilization
 - Use fusion and/or custom kernels where needed
 
+
+Included the folloowing code: 
+
+    model.eval()  # this enables model for production level inference setting - no norm / zeroing optimzations 
+    # grab exactly one sample from your test loader
+    sample = next(iter(test_loader))
+    inputs = sample['input'].to(self.device)
+  
+    with torch.no_grad(), profile(
+            activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+            record_shapes=True,
+            with_stack=True,
+            on_trace_ready=torch.profiler.tensorboard_trace_handler(str(exp_dir/ "ppnet_profiler"))
+        ) as prof:
+        # this is the single forward pass we’ll trace
+        _ = model(inputs)
+  
+    # (optional) dump a Chrome‐compatible JSON for chrome://tracing
+    prof.export_chrome_trace(str(exp_dir / "ppnet_trace.json"))
+  
+
+
+
+
+
+
 ---
 
 ## 📚 References
