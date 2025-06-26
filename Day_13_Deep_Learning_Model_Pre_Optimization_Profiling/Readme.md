@@ -107,6 +107,21 @@ Included the folloowing code:
 
 
 ---
+In my test on another network similar to the Unet 1D used by Vishakh,the HTA tool analysis identified the use of impliicit GEMM (see hta.pdf):  
+    
+    HTA’s “COMPUTATION” breakdown shows implicit-GEMM kernels are the biggest offenders:
+    
+    sm86_xmma_fprop_implicit_gemm_* – ~ 42% of compute time
+    
+    The two template-instantiated enable_if… launches (these are your GroupNorm/Mish element-wise ops) – ~ 18.7%
+    
+    A couple of smaller anonymous-namespace GPU kernels (tensor shuffles, vectorized adds) – ~ 11%
+    
+    This matches Vrushank’s finding that Conv1D → transform → GEMM → transform → elementwise is eating most of your GPU cycles.
+
+
+
+
 
 ## 📚 References
 
