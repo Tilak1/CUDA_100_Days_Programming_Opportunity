@@ -1,0 +1,10 @@
+June 22: 
+
+* When comparing between single GPU vs Multi GPU, singe had to process more kernels and hence used GRAPHS for it to lessen the launch overhead. 
+
+* Implemented Graph on Multi GPU. Benefits: 
+
+
+
+
+
