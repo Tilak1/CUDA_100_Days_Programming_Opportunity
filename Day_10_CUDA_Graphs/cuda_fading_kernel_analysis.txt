@@ -1,0 +1,33 @@
+CUDA GRAPH PERFORMANCE - FADING SCENARIOS WITH KERNEL COUNTS
+================================================================================
+
+
+Fast Fading (≤1 symbol):
+-----------------------
+  160000 kernels (   0.5 sym/kernel): Launch speedup = 174995.0x, Total speedup =  3.84x, Launch OH =  68.0%
+   80000 kernels (   1.0 sym/kernel): Launch speedup = 65107.8x, Total speedup =  2.30x, Launch OH =  36.9%
+
+Moderate Fading (1-20 symbols):
+------------------------------
+   40000 kernels (   2.0 sym/kernel): Launch speedup = 37970.6x, Total speedup =  1.76x, Launch OH =  25.2%
+   20000 kernels (   4.0 sym/kernel): Launch speedup = 15889.4x, Total speedup =  1.47x, Launch OH =  17.0%
+    4000 kernels (  20.0 sym/kernel): Launch speedup = 4508.5x, Total speedup =  1.22x, Launch OH =   5.2%
+
+Slow Fading (20-100 symbols):
+----------------------------
+    1000 kernels (  80.0 sym/kernel): Launch speedup =  991.3x, Total speedup =  1.24x, Launch OH =   1.2%
+
+Block Fading (100-1000 symbols):
+-------------------------------
+     400 kernels ( 200.0 sym/kernel): Launch speedup =  401.6x, Total speedup =  1.27x, Launch OH =   0.5%
+     200 kernels ( 400.0 sym/kernel): Launch speedup =  186.8x, Total speedup =  1.27x, Launch OH =   0.2%
+     100 kernels ( 800.0 sym/kernel): Launch speedup =   99.1x, Total speedup =  1.30x, Launch OH =   0.1%
+
+Quasi-Static (>1000 symbols):
+----------------------------
+      40 kernels (2000.0 sym/kernel): Launch speedup =   16.8x, Total speedup =  1.29x, Launch OH =   0.0%
+      20 kernels (4000.0 sym/kernel): Launch speedup =   19.7x, Total speedup =  1.22x, Launch OH =   0.0%
+      10 kernels (8000.0 sym/kernel): Launch speedup =    9.9x, Total speedup =  1.14x, Launch OH =   0.0%
+       8 kernels (10000.0 sym/kernel): Launch speedup =    8.2x, Total speedup =  1.24x, Launch OH =   0.0%
+       4 kernels (20000.0 sym/kernel): Launch speedup =    4.3x, Total speedup =  1.20x, Launch OH =   0.0%
+       1 kernels (80000.0 sym/kernel): Launch speedup =    0.6x, Total speedup =  1.14x, Launch OH =   0.0%
