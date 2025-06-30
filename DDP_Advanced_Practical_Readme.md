@@ -104,8 +104,15 @@ Above image showes a bit longer time / epochs but did converge finally. But the 
 Hence researchers have done their job to give us the next set of optimizers (as mentioned in the theory section of DDP - one day older GIT repo here). Using NovoGrad Optimizer should help !
 
 Novograd optimizer: 
+import torch_optimizer as opt
+
+optimizer = opt.NovoGrad(model.parameters(), lr=args.base_lr, grad_averaging=True)
+
+
 It updates weights by - Δ𝐰=−𝜆𝐦
 The grad_averaging parameter, which weights the momentum using a mix of the current and previous steps (like Adam), is empirically helpful for this problem.
 
-    
+Novograd Result:     
+![image](https://github.com/user-attachments/assets/a9ea670d-313e-4783-8a21-35593512a612)
+Best in class for now and hence this Multi-GPU DDP codebase worked and gave good convergence withing few epochs, where similar hyperparameters before gave very worse result i.e 0.25 base_lr and batch size of 256.  
 
