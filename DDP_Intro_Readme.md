@@ -138,6 +138,16 @@ Why warmup ?
 
 ![image](https://github.com/user-attachments/assets/265d523b-da58-4249-af60-9fbb66cfd22b)
 
+Why LARS?
+
+LARC: Layer-wise learning rates with clipping; SGD with momentum is base optimizer
+LAMB: Layer-wise learning rates; Adam as base optimizer
+• More successful than LARC at language models like BERT
+NovoGrad: Moving averages calculated on a per-layer basis
+• Also useful in several different domains
+
+
+
 ---
 
 # 🧠 Neural Network Miscellaneous
