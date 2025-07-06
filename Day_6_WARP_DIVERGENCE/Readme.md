@@ -41,6 +41,11 @@ The difference between the two kernels is small but has very significant perform
 
 The automatic variables declared in a CUDA kernel are placed into registers. By dynamically partitioning the registers among blocks, the SM can accommodate more blocks if they require few registers, and fewer blocks if they require more registers.
 
+
+---
+While compiler may use the predication and unrolling to control divergence, here are some steps the programmer can do to avoid warp divergence from his end:  
+
+
 🔧 1. Use Warp-Uniform Conditions
 Ensure all threads in a warp take the same path.
 
