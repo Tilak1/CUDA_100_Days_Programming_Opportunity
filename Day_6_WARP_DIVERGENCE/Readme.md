@@ -41,6 +41,122 @@ The difference between the two kernels is small but has very significant perform
 
 The automatic variables declared in a CUDA kernel are placed into registers. By dynamically partitioning the registers among blocks, the SM can accommodate more blocks if they require few registers, and fewer blocks if they require more registers.
 
+🔧 1. Use Warp-Uniform Conditions
+Ensure all threads in a warp take the same path.
+
+Instead of:
+
+cpp
+Copy
+Edit
+if (threadIdx.x < 5) { ... }
+Use:
+
+cpp
+Copy
+Edit
+bool enable = (threadIdx.x < 5);
+int value = enable ? compute() : 0;
+Or better — redesign so that all threads do the same work, or shift logic outside divergence-critical paths (e.g., inside if (blockIdx.x == 0) which is warp-uniform).
+
+🔁 2. Loop Striding Instead of Conditionals
+Instead of:
+
+cpp
+Copy
+Edit
+if (threadIdx.x < N) {
+    out[threadIdx.x] = A[threadIdx.x] + B[threadIdx.x];
+}
+Use:
+
+cpp
+Copy
+Edit
+for (int i = threadIdx.x; i < N; i += blockDim.x) {
+    out[i] = A[i] + B[i];
+}
+✅ No divergence: all threads loop over same structure
+
+🚫 3. Avoid Divergence Inside Loops or Kernels
+Divergence inside loops (especially with break, continue, return) is the most expensive.
+
+Instead of:
+
+cpp
+Copy
+Edit
+while (val[i] > threshold) {
+    ...
+}
+Try to use:
+
+cpp
+Copy
+Edit
+int iter = 0;
+while (iter < MAX_ITERS) {
+    bool active = (val[i] > threshold);
+    if (!active) break;
+    ...
+    iter++;
+}
+Or use flags to mask computation:
+
+cpp
+Copy
+Edit
+for (int i = 0; i < MAX; i++) {
+    bool active = (condition);
+    compute only if active;
+}
+⚙️ 4. Use Predicated Instructions Manually
+Replace:
+
+cpp
+Copy
+Edit
+if (in_bounds) {
+    s_array[i] = array[i];
+}
+With:
+
+cpp
+Copy
+Edit
+s_array[i] = in_bounds ? array[i] : 0;
+Or even better:
+
+cpp
+Copy
+Edit
+s_array[i] = __any_sync(0xFFFFFFFF, in_bounds) ? array[i] : 0;
+This makes the logic uniform across threads and relies less on compiler branching logic.
+
+🧩 5. Thread Compaction and Bitmasking (Advanced)
+If only a subset of threads need to do something:
+
+Let one warp compact the work into a smaller subgroup
+
+Use warp-level intrinsics:
+
+cpp
+Copy
+Edit
+unsigned mask = __ballot_sync(0xFFFFFFFF, active);
+int leader = __ffs(mask) - 1;
+Then only the leader thread (or a subset) executes something.
+
+This is the basis of thread compaction, warp voting, and coalesced divergence mitigation.
+
+🧠 Summary Table
+Goal	How to Avoid Divergence
+Ensure all threads follow same path	Use uniform if conditions, based on warp-wide vars
+Avoid short divergent paths	Convert if to ? : ternary / mask compute
+Avoid divergent loops	Use loop striding / predicated for loops
+Avoid divergence in memory access	Pad memory and load cooperatively
+Control warp behavior explicitly	Use warp intrinsics: __any_sync, __ballot_sync
+
 
 
 ---
