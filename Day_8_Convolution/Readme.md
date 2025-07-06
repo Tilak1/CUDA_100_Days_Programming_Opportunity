@@ -165,3 +165,8 @@ for (int i = threadIdx.x; i < blockDim.x + 2*r; i += blockDim.x) {
 * Prefer **cooperative tiling with unrolling** when performance and correctness are both priorities
 
 ---
+
+Ref: 
+
+* https://github.com/a-hamdi/GPU/tree/main/day%2007
+* https://www.youtube.com/watch?v=pBB8mZRM91A
