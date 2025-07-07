@@ -1,3 +1,14 @@
+#include <iostream>
+#include <cuda_runtime.h>
+
+#define Mask_width 5
+#define BLOCK_SIZE 256
+
+__constant__ float M[Mask_width];
+
+// Declare shared memory arrays
+__shared__ float S_A_PartialSHMEM[BLOCK_SIZE + Mask_width - 1];
+__shared__ float S_A_FullSHMEM[BLOCK_SIZE + Mask_width - 1];
 
 
 /* Below partial shared memory load kernel is not a good practice
@@ -42,18 +53,6 @@ There’s no branch divergence Just masked execution (like a SIMD predicate regi
 
 */
 
-#include <iostream>
-#include <cuda_runtime.h>
-
-#define Mask_width 5
-#define BLOCK_SIZE 256
-
-__constant__ float M[Mask_width];
-
-// Declare shared memory arrays
-__shared__ float S_A_PartialSHMEM[BLOCK_SIZE + Mask_width - 1];
-__shared__ float S_A_FullSHMEM[BLOCK_SIZE + Mask_width - 1];
-
 __global__ void oned_convolution_kernel_warp_partialSHMEMLoad(const float* A, float* C, int n) {
     int tid = blockIdx.x * blockDim.x + threadIdx.x;   
     
@@ -62,12 +61,12 @@ __global__ void oned_convolution_kernel_warp_partialSHMEMLoad(const float* A, fl
     int n_padded = blockDim.x + 2 * r;
     
     // Loading the first section of data into shared memory
-    if (tid < n + 2 * r) {  // Check bounds for padded array
+    //if (tid < n + 2 * r) {  // Check bounds for padded array
         S_A_PartialSHMEM[threadIdx.x] = A[tid];
-    }
+    //}
 
     // Loading second section of data into shared memory
-    int offset = threadIdx.x + blockDim.x;
+    int offset = threadIdx.x + blockDim.x; // second half starting from blockDim.x
     int global_offset = blockIdx.x * blockDim.x + offset;
     
     if (offset < n_padded && global_offset < n + 2 * r) {
