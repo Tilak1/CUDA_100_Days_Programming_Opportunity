@@ -146,12 +146,72 @@ for (int i = threadIdx.x; i < blockDim.x + 2*r; i += blockDim.x) {
 
 ---
 
-## 📦 Files
+Here's a refined, professional version of your `README.md` continuation for `oneDConvMixedMem.cu`, following your structure but with better clarity, grammar, and formatting:
 
-| File                | Description                              |
-| ------------------- | ---------------------------------------- |
-| `oneDConvNaive.cu`  | Naive convolution (no shared memory)     |
-| `oneDConvTiling.cu` | Shared memory convolution (two versions) |
+---
+
+## 🔄 `oneDConvMixedMem.cu` – Mixed vs Full Shared Memory for 1D Convolution
+
+This file explores two CUDA implementations for 1D convolution using **shared memory** and **mixed memory** strategies:
+
+### 🧠 Mixed Memory Convolution
+
+> In this strategy, **main block data** is loaded into fast shared memory, while **halo regions** (out-of-bound neighbors) are accessed directly from global memory when needed.
+
+### ⚙️ Characteristics
+
+* ✅ Conserves shared memory (uses only `blockDim.x` space)
+* ✅ Easier to fit on devices with shared memory constraints
+* ❌ Introduces **warp divergence** due to conditional halo checks
+* ❌ Global memory access for halos is **non-coalesced** and slower
+
+### 💡 When to Use:
+
+* When **shared memory budget is tight**
+* When halo accesses are rare or infrequent (e.g., sparse boundaries)
+
+---
+
+### 🚀 Full Shared Memory Convolution
+
+> All data — including halo regions — is **fully loaded into shared memory** before computation. Threads at the edges explicitly load neighboring halo elements, and conditional logic is minimized.
+
+### ⚙️ Characteristics
+
+* ✅ No warp divergence (uniform execution path)
+* ✅ All accesses are to **fast shared memory**
+* ✅ Global memory accesses are **coalesced**
+* ❌ Requires more shared memory per block (`blockDim.x + 2 * radius`)
+
+### 💡 When to Use:
+
+* Always preferred when shared memory budget allows
+* Ideal for **dense data** and **high-throughput** convolution kernels
+
+---
+
+### ✅ Performance Comparison Summary
+
+| Feature             | Full Shared Memory        | Mixed Memory           |
+| ------------------- | ------------------------- | ---------------------- |
+| Warp Divergence     | ❌ None                    | ✅ Conditional checks   |
+| Global Memory Reads | ✅ Coalesced (main + halo) | ❌ Non-coalesced (halo) |
+| Shared Memory Usage | ❌ Higher (`+2r` padding)  | ✅ Minimal              |
+| Speed               | ✅ Faster overall          | ❌ Slower for large n   |
+
+**Conclusion**:
+
+> For most convolution use cases, **fully staged shared memory** is faster, cleaner, and avoids divergence. The mixed memory variant trades off performance for resource efficiency.
+
+---
+
+## 📁 Project Structure
+
+| File                  | Description                                             |
+| --------------------- | ------------------------------------------------------- |
+| `oneDConvNaive.cu`    | Baseline implementation using only global memory        |
+| `oneDConvTiling.cu`   | Shared memory convolution with warp-predicated variants |
+| `oneDConvMixedMem.cu` | Mixed memory vs full shared memory convolution demo     |
 
 ---
 
