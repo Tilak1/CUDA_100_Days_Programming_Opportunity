@@ -4,30 +4,6 @@ Theory or equations:
 
 A high-performance CUDA implementation of 2D convolution with both basic and optimized versions featuring shared memory optimization and proper error handling.
 
-## 🏃 Usage
-
-### Basic Version
-```bash
-./basic_conv
-```
-
-### Improved Version
-```bash
-./improved_conv
-```
-
-### Sample Output
-```
-2D Convolution with 1024x1024 matrix and 7x7 kernel
-Initializing data...
-Copying data to GPU...
-Grid: 64x64, Block: 16x16
-Improved kernel execution time: 45 ms
-Shared memory kernel execution time: 32 ms
-Copying result back to CPU...
-Verifying results...
-Verification PASSED!
-COMPLETED SUCCESSFULLY!
 ```
 
 ## 🏗️ Architecture
@@ -87,22 +63,10 @@ __global__ void convolution_2d_shared(const int* __restrict__ matrix,
 - ✅ **Memory coalescing**: Optimized memory access patterns
 - ✅ **Bank conflict avoidance**: Careful shared memory layout
 
-## 🐛 Common Issues
-
-### Compilation Errors
-```bash
-# If you get "undefined reference to cudaXXX"
-nvcc -o conv conv.cu -lcuda -lcudart
-
-# For older CUDA versions
-nvcc -o conv conv.cu -std=c++11 -arch=sm_35
-```
-
-### Runtime Errors
-- **"Out of memory"**: Reduce matrix size or use smaller GPU
-- **"Invalid device function"**: Check GPU compute capability
-- **"Kernel launch failed"**: Verify grid/block dimensions
-
+## 🐛 Pending issues: 
+* Trail run explanations on 4 halos
+* How one thread loads many elements ?
+ 
 ## 🧪 Testing
 
 ### Verification Process
