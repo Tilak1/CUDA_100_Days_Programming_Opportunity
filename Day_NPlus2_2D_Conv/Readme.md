@@ -64,8 +64,10 @@ __global__ void convolution_2d_shared(const int* __restrict__ matrix,
 - ✅ **Bank conflict avoidance**: Careful shared memory layout
 
 ## 🐛 Pending issues: 
-* Trail run explanations on 4 halos
+* Trail run explanations on 4 halos (See  CD: 'CUDA 2D Convolution Code Review')
+* Halo indexing 2*MASK_OFFSET and Global Memory 
 * How one thread loads many elements ?
+* 
  
 ## 🧪 Testing
 
